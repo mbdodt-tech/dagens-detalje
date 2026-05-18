@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1fab2e">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Dagens detalje&quot;,&quot;short_name&quot;:&quot;Detalje&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23FAFAFB&quot;,&quot;theme_color&quot;:&quot;%231fab2e&quot;}">
+<title>Dagens detalje Hamborg</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  :root {
+    --ys: #1fab2e; --ys-dark: #0c4d33; --ys-light: #e8f9ea;
+    --ys-midnight: #002219; --ys-turq: #27a4d7;
+    --ink: #1A1A1A; --ink-soft: #555; --ink-faint: #999;
+    --bg: #FAFAFB; --card: #FFF; --line: #ECECEE;
+    --gold: #ffb700; --gold-light: #FFF8E1;
+    --green: #00A86B; --green-light: #E5F7EE;
+    --red: #d31a20;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 40px rgba(31,171,46,0.18);
+    --r: 14px; --rl: 20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;overflow-x:hidden}
+  .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative}
+
+  .topbar{background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;padding:18px 20px 22px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow-md)}
+  .topbar .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:18px;font-weight:800}
+  .topbar h1{font-size:17px;font-weight:700;line-height:1.2}
+  .topbar .sub{font-size:12px;opacity:.85;font-weight:500}
+  .topbar .right{margin-left:auto;display:flex;gap:8px}
+  .ib{background:rgba(255,255,255,.18);border:0;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
+  .ib:active{transform:scale(.94)}
+
+  .content{padding:20px 18px 100px}
+  .screen{display:none}.screen.active{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .hero{text-align:center;padding:30px 20px;background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;border-radius:var(--rl);margin-bottom:20px;box-shadow:var(--shadow-lg)}
+  .hero .emoji{font-size:48px;margin-bottom:12px}
+  .hero h2{font-size:22px;font-weight:800;margin-bottom:8px}
+  .hero p{font-size:14px;opacity:.95}
+
+  .tabs{display:flex;gap:6px;background:var(--card);padding:4px;border-radius:100px;box-shadow:var(--shadow-sm);margin-bottom:18px}
+  .tabs button{flex:1;padding:11px;background:0;border:0;border-radius:100px;font-weight:700;color:var(--ink-soft);cursor:pointer;font-size:14px;font-family:inherit}
+  .tabs button.active{background:var(--ys);color:#fff}
+
+  .fg{margin-bottom:18px}
+  .label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+  .label .req{color:var(--ys)} .label .help{display:block;font-size:12px;font-weight:500;color:var(--ink-soft);text-transform:none;letter-spacing:0;margin-top:4px}
+  .input,.textarea{width:100%;padding:13px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+  .input:focus,.textarea:focus{outline:none;border-color:var(--ys);box-shadow:0 0 0 3px rgba(31,171,46,.1)}
+  .textarea{resize:vertical;min-height:90px;line-height:1.5}
+
+  .tg{display:flex;gap:8px}
+  .tb{flex:1;padding:12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .15s}
+  .tb.active{background:var(--ys);color:#fff;border-color:var(--ys)}
+
+  .dg{display:flex;flex-direction:column;gap:12px}
+  .dc{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+  .dc:active{transform:scale(.98)}
+  .dc .di{width:48px;height:48px;border-radius:12px;background:var(--ys-light);color:var(--ys);display:grid;place-items:center;font-size:18px;font-weight:800;flex-shrink:0}
+  .dc .dt{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:2px}
+  .dc .ds{font-size:13px;color:var(--ink-soft)}
+  .dc.done{background:linear-gradient(135deg,#fff 0%,#f5fff5 100%);border-color:var(--ys)}.dc.done .di{background:var(--ys);color:#fff}
+  .dc.locked{opacity:.7}
+  .dc .badge{position:absolute;top:12px;right:12px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px}
+  .badge.gold{background:var(--gold)}.badge.green{background:var(--green)}.badge.red{background:var(--red)}
+
+  .pu{border:2.5px dashed var(--line);border-radius:14px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .18s;background:var(--card);position:relative;overflow:hidden}
+  .pu:active{transform:scale(.99)}.pu:hover{border-color:var(--ys);background:var(--ys-light)}
+  .pu.has{padding:0;border:none}
+  .pu img{width:100%;max-height:280px;object-fit:cover;border-radius:14px;display:block}
+  .pu .rp{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.65);color:#fff;border:0;padding:8px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;backdrop-filter:blur(8px)}
+
+  .btn{width:100%;padding:15px;background:var(--ys);color:#fff;border:0;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(31,171,46,.3);font-family:inherit}
+  .btn:active{transform:translateY(1px)}.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+  .btn-s{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+  .btn-ok{background:var(--green);box-shadow:0 4px 14px rgba(0,168,107,.3)}
+  .br{display:flex;gap:8px}.br .btn{flex:1}
+
+  .sb{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:14px 18px 22px;background:linear-gradient(to bottom,rgba(250,250,251,0) 0%,var(--bg) 30%);z-index:5}
+
+  .sh{font-size:11px;font-weight:700;color:var(--ys);letter-spacing:1px;text-transform:uppercase;margin:24px 0 12px}
+
+  .ib2{border-left:3px solid var(--gold);padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:18px;background:var(--gold-light);color:#6b5a00}
+  .ib2.red{background:#fde7e7;border-color:var(--red);color:#7a1414}
+  .ib2 strong{font-weight:700}
+
+  .gc{background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;border-radius:var(--rl);padding:22px;margin-bottom:18px;box-shadow:var(--shadow-lg)}
+  .gc.pending{background:linear-gradient(135deg,#6b6b6b 0%,#4a4a4a 100%);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+  .gc .gl{font-size:11px;opacity:.9;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
+  .gc .gn{font-size:56px;font-weight:800;line-height:1;margin:6px 0}
+  .gc .gs{font-size:13px;opacity:.85}
+  .gc .pt{font-size:22px;font-weight:700;margin:8px 0}
+  .gc .ps{font-size:13px;opacity:.85;line-height:1.5}
+
+  .fc{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+  .fc h3{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .fc p{font-size:14px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
+  .fc ul{list-style:none}.fc li{font-size:14px;line-height:1.5;padding-left:22px;position:relative;margin-bottom:6px}
+  .fc li.pos:before{content:"✓";color:var(--green);position:absolute;left:0;font-weight:700}
+  .fc li.imp:before{content:"→";color:var(--ys);position:absolute;left:0;font-weight:700}
+
+  .lo{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+  .lo.show{display:flex}
+  .sp{width:48px;height:48px;border:4px solid var(--ys-light);border-top-color:var(--ys);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .lo .tx{font-size:15px;font-weight:600;color:var(--ink)}
+  .lo .st{font-size:13px;color:var(--ink-soft);max-width:280px}
+
+  .sr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .st2{background:var(--card);padding:14px 10px;border-radius:12px;text-align:center;box-shadow:var(--shadow-sm)}
+  .st2 .n{font-size:22px;font-weight:800;color:var(--ys)}.st2 .l{font-size:11px;color:var(--ink-soft);text-transform:uppercase;font-weight:600;letter-spacing:.5px;margin-top:2px}
+
+  .sl{display:flex;flex-direction:column;gap:10px}
+  .si{background:var(--card);border-radius:12px;padding:14px;box-shadow:var(--shadow-sm);cursor:pointer;display:flex;gap:12px;transition:all .15s}
+  .si:active{transform:scale(.99)}
+  .si img{width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0}
+  .si .info{flex:1;min-width:0}.si .nm{font-size:14px;font-weight:700;color:var(--ink)}
+  .si .mt{font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .si .gp{background:var(--ys);color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:700;align-self:center;min-width:36px;text-align:center}
+  .si .gp.pending{background:var(--ink-faint)}.si .gp.released{background:var(--green)}
+  .si.winner{border:2px solid var(--gold);background:linear-gradient(135deg,#fffbe7 0%,#fff8e1 100%)}
+
+  .chips{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .chip{padding:7px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:100px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+  .chip.active{background:var(--ys);color:#fff;border-color:var(--ys)}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}.empty .emoji{font-size:48px;margin-bottom:12px;opacity:.6}
+
+  .tag{display:inline-block;padding:3px 8px;background:var(--ys-light);color:var(--ys);border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .tag.gold{background:#fff3d0;color:#8b6f00}.tag.green{background:var(--green-light);color:#006442}
+
+  .sn{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;line-height:1.5}
+
+  .rev{max-height:0;overflow:hidden;transition:max-height .3s ease}.rev.open{max-height:200px}
+
+  .sc{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+  .sc h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px}
+  .sc .row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+  .sc .row:last-child{border-bottom:none}
+  .sc .row label{font-size:13px;color:var(--ink);font-weight:500}
+  .sw{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+  .sw input{opacity:0;width:0;height:0}
+  .sld{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--line);transition:.2s;border-radius:26px}
+  .sld:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.15)}
+  .sw input:checked+.sld{background:var(--green)}.sw input:checked+.sld:before{transform:translateX(20px)}
+
+  .wb{background:linear-gradient(135deg,var(--gold) 0%,#d99a00 100%);color:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(245,180,0,.3)}
+  .wb .trophy{font-size:28px}.wb .wt{font-size:13px;font-weight:600;line-height:1.4}.wb .wt strong{font-size:15px;display:block;font-weight:800}
+
+  .da{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.da .btn{padding:12px;font-size:14px;flex:1;min-width:140px}
+
+  .setup-msg{padding:40px 24px;text-align:center;font-family:system-ui;max-width:480px;margin:0 auto}
+  .setup-msg h1{font-size:24px;margin-bottom:12px;color:var(--ys)}
+  .setup-msg code{background:#f1f1f1;padding:2px 6px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="ib" id="backBtn" style="display:none" onclick="goBack()">←</div>
+    <div class="logo">D</div>
+    <div><h1 id="topTitle">Dagens detalje</h1><div class="sub">Hamborg 2026</div></div>
+    <div class="right">
+      <button class="ib" id="roleBtn" style="display:none" onclick="toggleRole()">👤</button>
+      <button class="ib" id="logoutBtn" style="display:none" onclick="doLogout()">🚪</button>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- AUTH -->
+    <div class="screen active" id="s-auth">
+      <div class="hero"><div class="emoji">🛍️</div><h2>Velkommen til Hamborg!</h2><p>Find dagens detalje, tag et billede, og del din analyse.</p></div>
+      <div class="tabs"><button id="tab-su" class="active" onclick="setTab('su')">Opret bruger</button><button id="tab-li" onclick="setTab('li')">Log ind</button></div>
+      <div id="suFields">
+        <div class="fg"><label class="label">Fulde navn <span class="req">*</span></label><input class="input" id="suName" placeholder="F.eks. Marie Hansen" autocomplete="name"></div>
+        <div class="fg"><label class="label">Hold <span class="req">*</span></label><input class="input" id="suClass" placeholder="F.eks. Hold A"></div>
+      </div>
+      <div class="fg"><label class="label">E-mail <span class="req">*</span></label><input class="input" id="auEmail" placeholder="navn@eksempel.dk" type="email"></div>
+      <div class="fg"><label class="label">Adgangskode <span class="req">*</span></label><input class="input" id="auPw" placeholder="Min. 6 tegn" type="password"></div>
+      <button class="btn" id="authBtn" onclick="doAuth()">Opret bruger →</button>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen" id="s-home">
+      <div style="margin-bottom:20px"><div style="font-size:13px;color:var(--ink-soft);font-weight:600">Hej <span id="greetName">elev</span> 👋</div><div style="font-size:22px;font-weight:800;margin-top:2px">Vælg dagens projekt</div></div>
+      <div class="ib2">🌱 <strong>Husk bæredygtighed:</strong> Mindst én af dine 3 afleveringer skal have fokus på bæredygtighed.</div>
+      <div id="winnerNotice"></div>
+      <div class="dg" id="dayGrid"></div>
+    </div>
+
+    <!-- FORM -->
+    <div class="screen" id="s-form">
+      <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center"><div class="tag" id="formTag">Tirsdag</div><div id="formDl"></div></div>
+      <div class="sh">📸 Billede af detaljen</div>
+      <div class="fg">
+        <input type="file" id="phIn" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event)">
+        <div class="pu" id="phUp" onclick="document.getElementById('phIn').click()"><div style="font-size:40px;margin-bottom:8px">📷</div><div style="font-size:14px;font-weight:600">Tag eller upload billede</div><div style="font-size:12px;color:var(--ink-soft);margin-top:4px">Tryk for at åbne kamera</div></div>
+      </div>
+      <div class="sh">🏪 Butik & sted</div>
+      <div class="fg"><label class="label">Butik (gerne med adresse) <span class="req">*</span></label><input class="input" id="fBut" placeholder="F.eks. Karstadt, Mönckebergstraße 16"></div>
+      <div class="fg"><label class="label">Dato og klokkeslæt</label><input class="input" id="fDat" type="datetime-local"></div>
+      <div class="fg">
+        <label class="label">Fokus på bæredygtighed?</label>
+        <div class="tg"><button type="button" class="tb" id="susY" onclick="setSus(true)">Ja 🌱</button><button type="button" class="tb active" id="susN" onclick="setSus(false)">Nej</button></div>
+        <div class="rev" id="susRev"><div style="margin-top:12px"><textarea class="textarea" id="fSus" rows="3" placeholder="Beskriv kort hvordan denne detalje viser bæredygtighed..."></textarea></div></div>
+      </div>
+      <div class="sh">✍️ Din analyse</div>
+      <div class="fg"><label class="label">Detaljen, som jeg har observeret, er: <span class="req">*</span><span class="help">Beskriv eksponeringen — hvad ser du, og hvorfor er det interessant?</span></label><textarea class="textarea" id="fDet" rows="4" placeholder="Skriv detaljeret..."></textarea></div>
+      <div class="fg"><label class="label">Kan detaljen bruges i youSee butik? <span class="req">*</span><span class="help">Brug gerne fagbegreber (A-pladser, eksponeringsformer, kundestrøm m.m.).</span></label><textarea class="textarea" id="fYou" rows="4" placeholder="Forklar hvordan / hvorfor ikke..."></textarea></div>
+      <div class="fg"><label class="label">Er butikken et "must-see" for resten af holdet? <span class="req">*</span><span class="help">Begrund dit svar.</span></label><textarea class="textarea" id="fMus" rows="3" placeholder="Begrund dit svar..."></textarea></div>
+      <div style="height:80px"></div>
+    </div>
+
+    <!-- DETAIL -->
+    <div class="screen" id="s-detail"><div id="detC"></div></div>
+
+    <!-- TEACHER -->
+    <div class="screen" id="s-teacher">
+      <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:end">
+        <div><div style="font-size:13px;color:var(--ink-soft);font-weight:600">Lærer-visning</div><div style="font-size:22px;font-weight:800;margin-top:2px">Dashboard</div></div>
+        <button style="background:0;border:0;cursor:pointer;font-weight:700;color:var(--ys);font-size:14px;font-family:inherit" onclick="show('settings');renderSettings()">⚙️ Indstillinger</button>
+      </div>
+      <div class="sr" id="statsRow"></div>
+      <div class="br" style="margin-bottom:16px"><button class="btn btn-s" onclick="exportCSV('all')">📊 Eksportér alle</button><button class="btn btn-s" onclick="exportCSV(S.filter)">📅 Kun valgt dag</button></div>
+      <div class="chips" id="filterChips"><div class="chip active" data-day="all" onclick="setFilter('all')">Alle</div><div class="chip" data-day="tirsdag" onclick="setFilter('tirsdag')">Tirsdag</div><div class="chip" data-day="onsdag" onclick="setFilter('onsdag')">Onsdag</div><div class="chip" data-day="torsdag" onclick="setFilter('torsdag')">Torsdag</div></div>
+      <div class="sl" id="subList"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="s-settings"><div style="margin-bottom:18px"><div style="font-size:13px;color:var(--ink-soft);font-weight:600">Lærer-styring</div><div style="font-size:22px;font-weight:800;margin-top:2px">Indstillinger pr. dag</div></div><div id="setC"></div></div>
+
+  </div>
+  <div class="sb" id="subBar" style="display:none"><button class="btn" id="subBtn" onclick="submitForm()">Indsend & få bedømmelse</button></div>
+</div>
+
+<div class="lo" id="loader"><div class="sp"></div><div class="tx" id="loaderTx">Bedømmer din analyse...</div><div class="st">Claude vurderer din brug af teori, billedets stop-effekt og din opgaveløsning</div></div>
+
+<script>
+// ╔══════════════════════════════════════════════════════╗
+// ║  KONFIGURATION — UDFYLD DISSE FØR BRUG              ║
+// ║  Find dem i Supabase → Settings → API                ║
+// ╚══════════════════════════════════════════════════════╝
+const SUPABASE_URL  = 'https://jvxsjxpstlbviasjeiau.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_aGv0xmvpDnmUxmUhDfr9Ig_M9uDjfao';
+// ════════════════════════════════════════════════════════
+
+if (SUPABASE_URL === 'UDFYLD_MIG') {
+  document.querySelector('.app').innerHTML = '<div class="setup-msg"><h1>🔧 Opsætning påkrævet</h1><p>Åbn denne fil i en teksteditor og udfyld <code>SUPABASE_URL</code> og <code>SUPABASE_KEY</code> øverst i script-blokken med dine værdier fra Supabase → Settings → API.</p><p style="margin-top:16px">Se deployment-guiden for trin-for-trin instruktioner.</p></div>';
+}
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const DAYS = [{id:'tirsdag',label:'Tirsdag',e:'Ti'},{id:'onsdag',label:'Onsdag',e:'On'},{id:'torsdag',label:'Torsdag',e:'To'}];
+
+const S = { user:null, profile:null, role:'student', tab:'su', currentDay:null, editingId:null, filter:'all' };
+let photoPreview=null, photoBlob=null, existingPhotoPath=null;
+
+// === NAV ===
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('s-'+id); if(el) el.classList.add('active');
+  document.getElementById('backBtn').style.display=['form','detail','settings'].includes(id)?'grid':'none';
+  document.getElementById('subBar').style.display=id==='form'?'block':'none';
+  const t={auth:'Dagens detalje',home:'Dagens detalje',form:S.editingId?'Rediger analyse':'Ny analyse',detail:'Analyse',teacher:'Dashboard',settings:'Indstillinger'};
+  document.getElementById('topTitle').textContent=t[id]||'Dagens detalje';
+  window.scrollTo(0,0);
+}
+function goBack(){ S.role==='teacher'?(show('teacher'),renderTeacher()):(show('home'),renderHome()); }
+function toggleRole(){
+  S.role=S.role==='student'?'teacher':'student';
+  document.getElementById('roleBtn').textContent=S.role==='teacher'?'🎓':'👤';
+  S.role==='teacher'?(show('teacher'),renderTeacher()):(show('home'),renderHome());
+}
+
+// === AUTH ===
+function setTab(t){
+  S.tab=t;
+  document.getElementById('tab-su').classList.toggle('active',t==='su');
+  document.getElementById('tab-li').classList.toggle('active',t==='li');
+  document.getElementById('suFields').style.display=t==='su'?'block':'none';
+  document.getElementById('authBtn').textContent=t==='su'?'Opret bruger →':'Log ind →';
+}
+
+async function doAuth(){
+  const email=document.getElementById('auEmail').value.trim().toLowerCase();
+  const pw=document.getElementById('auPw').value;
+  if(!email||!email.includes('@')){alert('Indtast en gyldig email');return}
+  if(pw.length<6){alert('Adgangskode skal være mindst 6 tegn');return}
+
+  if(S.tab==='su'){
+    const name=document.getElementById('suName').value.trim();
+    const cls=document.getElementById('suClass').value.trim();
+    if(!name||!cls){alert('Udfyld navn og hold');return}
+    const{data,error}=await sb.auth.signUp({email,password:pw,options:{data:{full_name:name,class_group:cls}}});
+    if(error){alert(error.message);return}
+    S.user=data.user;
+  } else {
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pw});
+    if(error){alert(error.message);return}
+    S.user=data.user;
+  }
+  await loadProfile();
+  show('home');renderHome();
+}
+
+async function loadProfile(){
+  if(!S.user) return;
+  const{data}=await sb.from('profiles').select('*').eq('id',S.user.id).single();
+  S.profile=data;
+  S.role=data?.role==='teacher'?'teacher':'student';
+  document.getElementById('roleBtn').style.display=data?.role==='teacher'?'grid':'none';
+  document.getElementById('roleBtn').textContent=S.role==='teacher'?'🎓':'👤';
+  document.getElementById('logoutBtn').style.display='grid';
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  S.user=null;S.profile=null;S.role='student';
+  document.getElementById('roleBtn').style.display='none';
+  document.getElementById('logoutBtn').style.display='none';
+  show('auth');setTab('su');
+}
+
+// === DATA ===
+async function getMySubs(){
+  const{data}=await sb.from('submissions').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false});
+  return data||[];
+}
+async function getAllSubs(){
+  const{data}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').order('created_at',{ascending:false});
+  return data||[];
+}
+async function getDaySetting(day){
+  const{data}=await sb.from('day_settings').select('*').eq('day',day).single();
+  return data||{day,deadline:null,locked:false,winner_id:null,winner_released:false};
+}
+async function photoUrl(path){
+  if(!path)return'';
+  const{data}=await sb.storage.from('submission-photos').createSignedUrl(path,3600);
+  return data?.signedUrl||'';
+}
+async function photoUrls(paths){
+  const valid=paths.filter(Boolean);
+  if(!valid.length)return{};
+  const{data}=await sb.storage.from('submission-photos').createSignedUrls(valid,3600);
+  const m={};(data||[]).forEach(i=>{m[i.path]=i.signedUrl});return m;
+}
+
+// === HOME ===
+async function renderHome(){
+  document.getElementById('greetName').textContent=S.profile?.full_name?.split(' ')[0]||'elev';
+  const my=await getMySubs();
+  const grid=document.getElementById('dayGrid');
+
+  const wh=[];
+  for(const d of DAYS){
+    const ds=await getDaySetting(d.id);
+    if(ds.winner_id&&ds.winner_released){
+      try{
+        const{data:w}=await sb.from('submissions').select('*,profiles(full_name)').eq('id',ds.winner_id).single();
+        if(w) wh.push(`<div class="wb"><div class="trophy">🏆</div><div class="wt"><strong>Dagens vinder ${d.label.toLowerCase()}</strong>${esc(w.profiles.full_name)} — ${esc(w.butik.split(',')[0])}</div></div>`);
+      }catch{}
+    }
+  }
+  document.getElementById('winnerNotice').innerHTML=wh.join('');
+
+  grid.innerHTML='';
+  for(const d of DAYS){
+    const ds=await getDaySetting(d.id);
+    const s=my.find(x=>x.day===d.id);
+    const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
+    const isLocked=ds.locked||(dlMs&&dlMs<now);
+
+    let status='Ikke afleveret',badge='';
+    if(s){
+      if(s.released&&s.feedback?.karakter){status=`Karakter: ${s.feedback.karakter}`;badge='<div class="badge green">Bedømt</div>'}
+      else if(s.feedback?.karakter){status='Afleveret — venter på frigivelse';badge='<div class="badge gold">Afleveret</div>'}
+      else{status='Afleveret — bedømmes';badge='<div class="badge gold">Afleveret</div>'}
+    } else if(isLocked){status='Lukket';badge='<div class="badge red">Lukket</div>'}
+    else if(dlMs){status=`Deadline om ${fmtCd(dlMs-now)}`}
+
+    const c=document.createElement('div');
+    c.className='dc'+(s?' done':'')+(isLocked&&!s?' locked':'');
+    c.innerHTML=`<div class="di">${d.e}</div><div style="flex:1;min-width:0"><div class="dt">Dagens detalje ${d.label.toLowerCase()}</div><div class="ds">${status}</div></div>${isLocked?'<span style="font-size:16px;color:var(--ink-faint)">🔒</span>':'<span style="font-size:18px;color:var(--ink-faint)">›</span>'}${badge}`;
+    c.onclick=()=>{
+      if(s){show('detail');renderDetail(s)}
+      else if(isLocked){alert('Denne dag er lukket.')}
+      else{S.currentDay=d.id;S.editingId=null;document.getElementById('formTag').textContent=`Dagens detalje ${d.label.toLowerCase()}`;document.getElementById('formDl').innerHTML=ds.deadline?`<span style="font-size:12px;font-weight:700;background:var(--ys-light);color:var(--ys);padding:3px 8px;border-radius:6px">⏰ ${fmtDl(ds.deadline)}</span>`:'';resetForm();document.getElementById('subBtn').textContent='Indsend & få bedømmelse';show('form')}
+    };
+    grid.appendChild(c);
+  }
+}
+
+function fmtCd(ms){if(ms<0)return'0 min';const h=Math.floor(ms/36e5),m=Math.floor((ms%36e5)/6e4);return h>24?Math.floor(h/24)+' dage':h>0?`${h}t ${m}m`:`${m} min`}
+function fmtDl(iso){return new Date(iso).toLocaleString('da-DK',{weekday:'short',hour:'2-digit',minute:'2-digit'})}
+
+// === FORM ===
+function resetForm(){
+  photoPreview=null;photoBlob=null;existingPhotoPath=null;
+  const p=document.getElementById('phUp');p.classList.remove('has');
+  p.innerHTML='<div style="font-size:40px;margin-bottom:8px">📷</div><div style="font-size:14px;font-weight:600">Tag eller upload billede</div><div style="font-size:12px;color:var(--ink-soft);margin-top:4px">Tryk for at åbne kamera</div>';
+  document.getElementById('fBut').value='';
+  document.getElementById('fDat').value=new Date().toISOString().slice(0,16);
+  document.getElementById('fDet').value='';
+  document.getElementById('fYou').value='';
+  document.getElementById('fMus').value='';
+  document.getElementById('fSus').value='';
+  setSus(false);
+}
+
+async function loadForEdit(sub){
+  S.editingId=sub.id;S.currentDay=sub.day;
+  document.getElementById('formTag').textContent=`Rediger ${sub.day}`;
+  document.getElementById('subBtn').textContent='Gem ændringer & re-bedøm';
+  resetForm();
+  existingPhotoPath=sub.photo_path;
+  const url=await photoUrl(sub.photo_path);
+  photoPreview=url;
+  const p=document.getElementById('phUp');p.classList.add('has');
+  p.innerHTML=`<img src="${url}" alt=""><button class="rp" onclick="event.stopPropagation();document.getElementById('phIn').click()">↻ Skift</button>`;
+  document.getElementById('fBut').value=sub.butik;
+  document.getElementById('fDat').value=sub.dato?sub.dato.slice(0,16):'';
+  document.getElementById('fDet').value=sub.detalje;
+  document.getElementById('fYou').value=sub.yousee_use;
+  document.getElementById('fMus').value=sub.must_see;
+  document.getElementById('fSus').value=sub.sustainability_comment||'';
+  setSus(!!sub.sustainability);
+  show('form');
+}
+
+function setSus(v){
+  document.getElementById('susY').classList.toggle('active',v);
+  document.getElementById('susN').classList.toggle('active',!v);
+  document.getElementById('susRev').classList.toggle('open',v);
+  if(!v)document.getElementById('fSus').value='';
+}
+
+function handlePhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const img=new Image(),reader=new FileReader();
+  reader.onload=ev=>{
+    img.onload=()=>{
+      const c=document.createElement('canvas'),mx=1100,sc=Math.min(1,mx/img.width);
+      c.width=img.width*sc;c.height=img.height*sc;
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      photoPreview=c.toDataURL('image/jpeg',.72);
+      c.toBlob(b=>{photoBlob=b},'image/jpeg',.72);
+      const p=document.getElementById('phUp');p.classList.add('has');
+      p.innerHTML=`<img src="${photoPreview}" alt=""><button class="rp" onclick="event.stopPropagation();document.getElementById('phIn').click()">↻ Skift</button>`;
+    };img.src=ev.target.result;
+  };reader.readAsDataURL(f);
+}
+
+async function submitForm(){
+  const butik=document.getElementById('fBut').value.trim();
+  const det=document.getElementById('fDet').value.trim();
+  const you=document.getElementById('fYou').value.trim();
+  const mus=document.getElementById('fMus').value.trim();
+  if(!photoPreview&&!existingPhotoPath){alert('Tilføj et billede');return}
+  if(!butik||!det||!you||!mus){alert('Udfyld alle felter markeret med *');return}
+
+  const sus=document.getElementById('susY').classList.contains('active');
+  const susC=document.getElementById('fSus').value.trim();
+
+  const ds=await getDaySetting(S.currentDay);
+  const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
+  if(ds.locked||(dlMs&&dlMs<now)){alert('Denne dag er lukket.');return}
+
+  showLoader('Uploader og bedømmer...');
+
+  let pp=existingPhotoPath;
+  if(photoBlob){
+    pp=`${S.user.id}/${S.currentDay}_${Date.now()}.jpg`;
+    const{error:upErr}=await sb.storage.from('submission-photos').upload(pp,photoBlob,{contentType:'image/jpeg',upsert:true});
+    if(upErr){hideLoader();alert('Billede kunne ikke uploades: '+upErr.message);return}
+  }
+
+  const row={user_id:S.user.id,day:S.currentDay,butik,detalje:det,yousee_use:you,must_see:mus,sustainability:sus,sustainability_comment:sus?susC:'',dato:document.getElementById('fDat').value||null,photo_path:pp,grade:null,feedback:null,grading_error:null,released:false};
+
+  let saved;
+  if(S.editingId){
+    const{data,error}=await sb.from('submissions').update(row).eq('id',S.editingId).select().single();
+    if(error){hideLoader();alert('Fejl: '+error.message);return}
+    saved=data;
+  } else {
+    const{data,error}=await sb.from('submissions').insert(row).select().single();
+    if(error){hideLoader();alert('Fejl: '+error.message);return}
+    saved=data;
+  }
+
+  try{
+    await sb.functions.invoke('grade-submission',{body:{submission_id:saved.id}});
+    const{data:upd}=await sb.from('submissions').select('*').eq('id',saved.id).single();
+    if(upd) saved=upd;
+  }catch(err){console.error('Grading error:',err)}
+
+  hideLoader();
+  S.editingId=null;
+  show('detail');renderDetail(saved);
+}
+
+// === DETAIL ===
+async function renderDetail(sub){
+  const el=document.getElementById('detC');
+  const fb=sub.feedback;
+  const dl=DAYS.find(d=>d.id===sub.day)?.label||'';
+  const ds=await getDaySetting(sub.day);
+  const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
+  const isLocked=ds.locked||(dlMs&&dlMs<now);
+  const isOwner=sub.user_id===S.user?.id;
+  const isT=S.role==='teacher';
+  const showG=isT||(isOwner&&sub.released);
+  const pUrl=await photoUrl(sub.photo_path);
+
+  let gb='';
+  if(showG&&fb){
+    gb=`<div class="gc"><div class="gl">${isT&&!sub.released?'Foreslået karakter':'Karakter'}</div><div class="gn">${fb.karakter}</div><div class="gs">12-skalaen${isT&&!sub.released?' • Ikke frigivet':''}</div></div>
+    <div class="fc"><h3>📝 Samlet feedback</h3><p>${esc(fb.samletFeedback||'')}</p></div>
+    <div class="fc"><h3>📚 Teoribrug</h3><p>${esc(fb.teoriBrug||'')}</p></div>
+    <div class="fc"><h3>👁️ Stop-effekt</h3><p>${esc(fb.stopeffekt||'')}</p></div>
+    <div class="fc"><h3>📋 Opgaveløsning</h3><p>${esc(fb.opgaveloesning||'')}</p></div>
+    <div class="fc"><h3>✓ Stærke sider</h3><ul>${(fb.staerkeSider||[]).map(p=>`<li class="pos">${esc(p)}</li>`).join('')}</ul></div>
+    <div class="fc"><h3>→ Forbedringsmuligheder</h3><ul>${(fb.forbedringsmuligheder||[]).map(p=>`<li class="imp">${esc(p)}</li>`).join('')}</ul></div>`;
+  } else if(isOwner&&!sub.released&&fb){
+    gb='<div class="gc pending"><div class="gl">Status</div><div class="pt">Afleveret ✓</div><div class="ps">Din karakter vises når læreren frigiver den.</div></div>';
+  } else if(isOwner&&sub.grading_error){
+    gb=`<div class="fc" style="border-left:3px solid var(--red)"><h3>Bedømmelse mislykkedes</h3><p>${esc(sub.grading_error)}</p></div>`;
+  } else if(isOwner){
+    gb='<div class="gc pending"><div class="gl">Status</div><div class="pt">Bedømmes...</div></div>';
+  }
+
+  let act='';
+  if(isT){
+    act=`<div class="da">${fb?`<button class="btn ${sub.released?'btn-s':'btn-ok'}" onclick="toggleRelease('${sub.id}')">${sub.released?'🔒 Skjul karakter':'✅ Frigiv karakter'}</button>`:''}<button class="btn" style="background:${ds.winner_id===sub.id?'var(--card)':'var(--gold)'};color:${ds.winner_id===sub.id?'var(--ink)':'#fff'};border:${ds.winner_id===sub.id?'1.5px solid var(--line)':'0'};box-shadow:${ds.winner_id===sub.id?'none':'0 4px 14px rgba(245,180,0,.3)'}" onclick="toggleWinner('${sub.id}')">${ds.winner_id===sub.id?'🏆 Fjern som vinder':'🏆 Kår som vinder'}</button></div>`;
+  } else if(isOwner&&!isLocked){
+    act=`<div class="da"><button class="btn btn-s" onclick="editSub('${sub.id}')">✏️ Rediger besvarelse</button></div>`;
+  } else if(isOwner&&isLocked){
+    act='<div class="ib2 red">🔒 Dagen er lukket — du kan ikke længere redigere.</div>';
+  }
+
+  const profLine=isT&&sub.profiles?`<div style="margin-bottom:14px;font-size:13px;color:var(--ink-soft)"><strong>${esc(sub.profiles.full_name)}</strong> · ${esc(sub.profiles.class_group)} · ${esc(sub.profiles.email)}</div>`:'';
+
+  el.innerHTML=`
+    <div style="margin-bottom:14px"><div class="tag">Dagens detalje ${dl.toLowerCase()}</div>${sub.sustainability?' <span class="tag gold">🌱 Bæredygtighed</span>':''}${ds.winner_id===sub.id?' <span class="tag gold">🏆 Vinder</span>':''}${sub.released?' <span class="tag green">Frigivet</span>':''}</div>
+    ${profLine}${act}${gb}
+    <img src="${pUrl}" style="width:100%;border-radius:14px;margin:18px 0;box-shadow:var(--shadow-sm)">
+    <div class="fc"><h3>🏪 Butik</h3><p>${esc(sub.butik)}</p></div>
+    <div class="fc"><h3>Detaljen jeg har observeret</h3><p>${esc(sub.detalje)}</p></div>
+    ${sub.sustainability_comment?`<div class="fc"><h3>🌱 Bæredygtighedskommentar</h3><p>${esc(sub.sustainability_comment)}</p></div>`:''}
+    <div class="fc"><h3>Kan bruges i youSee?</h3><p>${esc(sub.yousee_use)}</p></div>
+    <div class="fc"><h3>Must-see for holdet?</h3><p>${esc(sub.must_see)}</p></div>`;
+}
+
+async function editSub(id){
+  const{data}=await sb.from('submissions').select('*').eq('id',id).single();
+  if(data) loadForEdit(data);
+}
+async function toggleRelease(id){
+  const{data:s}=await sb.from('submissions').select('released').eq('id',id).single();
+  await sb.from('submissions').update({released:!s.released}).eq('id',id);
+  const{data:upd}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
+  renderDetail(upd);
+}
+async function toggleWinner(id){
+  const{data:s}=await sb.from('submissions').select('day').eq('id',id).single();
+  const ds=await getDaySetting(s.day);
+  const newWinner=ds.winner_id===id?null:id;
+  await sb.from('day_settings').update({winner_id:newWinner,winner_released:newWinner?ds.winner_released:false}).eq('day',s.day);
+  const{data:upd}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
+  renderDetail(upd);
+}
+
+// === TEACHER ===
+async function renderTeacher(){
+  const all=await getAllSubs();
+  const grades=all.filter(s=>s.feedback?.karakter).map(s=>{const k=s.feedback.karakter;return k==='-3'?-3:k==='00'?0:k==='02'?2:parseInt(k)});
+  const avg=grades.length?(grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(1):'–';
+  const uniq=new Set(all.map(s=>s.user_id)).size;
+  document.getElementById('statsRow').innerHTML=`<div class="st2"><div class="n">${all.length}</div><div class="l">Besvarelser</div></div><div class="st2"><div class="n">${uniq}</div><div class="l">Elever</div></div><div class="st2"><div class="n">${avg}</div><div class="l">Snit</div></div>`;
+
+  const filtered=S.filter==='all'?all:all.filter(s=>s.day===S.filter);
+  const list=document.getElementById('subList');
+  if(!filtered.length){list.innerHTML='<div class="empty"><div class="emoji">📭</div><p>Ingen besvarelser endnu</p></div>';return}
+
+  const winners={};
+  for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
+
+  const urls=await photoUrls(filtered.map(s=>s.photo_path));
+
+  list.innerHTML=filtered.map(s=>{
+    const p=s.profiles||{};
+    return`<div class="si${winners[s.id]?' winner':''}" onclick="openSub('${s.id}')">
+      <img src="${urls[s.photo_path]||''}" alt="">
+      <div class="info"><div class="nm">${esc(p.full_name||'?')} ${winners[s.id]?'🏆':''} ${s.sustainability?'🌱':''}</div>
+      <div class="mt">${esc(p.class_group||'')} • ${s.day} • ${esc(s.butik.split(',')[0])}${s.released?' • <span style="color:var(--green);font-weight:700">frigivet</span>':''}</div></div>
+      <div class="gp ${s.feedback?.karakter?(s.released?'released':''):'pending'}">${s.feedback?.karakter||'...'}</div></div>`
+  }).join('');
+}
+
+async function openSub(id){
+  const{data}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
+  if(data){show('detail');renderDetail(data)}
+}
+function setFilter(d){
+  S.filter=d;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.day===d));
+  renderTeacher();
+}
+
+// === SETTINGS ===
+async function renderSettings(){
+  const html=[];
+  for(const d of DAYS){
+    const ds=await getDaySetting(d.id);
+    const all=await getAllSubs();
+    const dSubs=all.filter(x=>x.day===d.id);
+    const rel=dSubs.filter(x=>x.released).length;
+    const w=ds.winner_id?all.find(x=>x.id===ds.winner_id):null;
+    const wName=w?.profiles?.full_name||'?';
+
+    html.push(`<div class="sc"><h3>📅 Dagens detalje ${d.label.toLowerCase()}</h3>
+      <div class="row"><label>Deadline</label><input type="datetime-local" class="input" style="width:auto;padding:8px 10px;font-size:13px" value="${ds.deadline?new Date(ds.deadline).toISOString().slice(0,16):''}" onchange="updDl('${d.id}',this.value)"></div>
+      <div class="row"><label>Lås for aflevering</label><label class="sw"><input type="checkbox" ${ds.locked?'checked':''} onchange="togLock('${d.id}',this.checked)"><span class="sld"></span></label></div>
+      <div class="row"><label>Afleveringer</label><span style="font-weight:700;color:var(--ys)">${dSubs.length}</span></div>
+      <div class="row"><label>Frigivet</label><span style="font-weight:700">${rel}/${dSubs.length}</span></div>
+      <div class="row"><label>Vinder</label><span style="font-size:13px;font-weight:600;text-align:right">${w?'🏆 '+esc(wName):'<em style="color:var(--ink-faint)">Ikke valgt</em>'}</span></div>
+      <div class="br" style="margin-top:14px">
+        <button class="btn btn-s" onclick="relAll('${d.id}')">✅ Frigiv alle</button>
+        ${w?`<button class="btn" style="background:${ds.winner_released?'var(--card)':'var(--gold)'};color:${ds.winner_released?'var(--ink)':'#fff'};border:${ds.winner_released?'1.5px solid var(--line)':'0'};box-shadow:${ds.winner_released?'none':'0 4px 14px rgba(245,180,0,.3)'}" onclick="togWR('${d.id}')">${ds.winner_released?'🔒 Skjul vinder':'🏆 Frigiv vinder'}</button>`:''}
+      </div></div>`);
+  }
+  document.getElementById('setC').innerHTML=html.join('');
+}
+async function updDl(d,v){await sb.from('day_settings').update({deadline:v?new Date(v).toISOString():null}).eq('day',d);renderSettings()}
+async function togLock(d,v){await sb.from('day_settings').update({locked:v}).eq('day',d);renderSettings()}
+async function relAll(d){
+  if(!confirm(`Frigiv alle karakterer for ${d}?`))return;
+  const all=await getAllSubs();
+  const ds=all.filter(x=>x.day===d&&x.feedback?.karakter);
+  for(const s of ds){await sb.from('submissions').update({released:true}).eq('id',s.id)}
+  alert(`${ds.length} karakterer frigivet.`);renderSettings();
+}
+async function togWR(d){
+  const ds=await getDaySetting(d);
+  await sb.from('day_settings').update({winner_released:!ds.winner_released}).eq('day',d);
+  renderSettings();
+}
+
+// === CSV ===
+async function exportCSV(dayFilter){
+  const all=await getAllSubs();
+  const data=(dayFilter&&dayFilter!=='all')?all.filter(s=>s.day===dayFilter):all;
+  if(!data.length){alert('Ingen besvarelser');return}
+  const winners={};for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
+  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt'];
+  const rows=data.map(s=>{const p=s.profiles||{};return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.feedback?.karakter||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK')]});
+  const ce=v=>{const s=String(v??'').replace(/\r?\n/g,' ');return /[",;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+  const csv='\ufeff'+[h,...rows].map(r=>r.map(ce).join(';')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`dagens-detalje-${dayFilter&&dayFilter!=='all'?dayFilter:'alle'}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();URL.revokeObjectURL(a.href);
+}
+
+// === UTILS ===
+function showLoader(t){document.getElementById('loaderTx').textContent=t||'Arbejder...';document.getElementById('loader').classList.add('show')}
+function hideLoader(){document.getElementById('loader').classList.remove('show')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+// === INIT ===
+(async()=>{
+  if(SUPABASE_URL==='UDFYLD_MIG')return;
+  const{data:{session}}=await sb.auth.getSession();
+  if(session){
+    S.user=session.user;
+    await loadProfile();
+    show('home');renderHome();
+  } else {
+    show('auth');setTab('su');
+  }
+  sb.auth.onAuthStateChange((ev,sess)=>{
+    if(ev==='SIGNED_OUT'){S.user=null;S.profile=null;show('auth')}
+  });
+})();
+</script>
+</body>
+</html>
