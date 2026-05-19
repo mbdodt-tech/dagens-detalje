@@ -378,6 +378,18 @@ async function renderHome(){
   grid.innerHTML='';
   for(const d of DAYS){
     const ds=await getDaySetting(d.id);
+    const isStudent=S.role==='student';
+
+    // Hvis dagen ikke er synlig og brugeren er elev: vis som "kommer snart"
+    if(isStudent&&!ds.visible){
+      const c=document.createElement('div');
+      c.className='dc locked';
+      c.innerHTML=`<div class="di" style="background:var(--line);color:var(--ink-faint)">${d.e}</div><div style="flex:1;min-width:0"><div class="dt" style="color:var(--ink-faint)">Dagens detalje ${d.label.toLowerCase()}</div><div class="ds">Frigives af læreren</div></div><span style="font-size:16px;color:var(--ink-faint)">🔒</span>`;
+      c.style.cursor='default';
+      grid.appendChild(c);
+      continue;
+    }
+
     const s=my.find(x=>x.day===d.id);
     const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
     const isLocked=ds.locked||(dlMs&&dlMs<now);
@@ -649,6 +661,7 @@ async function renderSettings(){
     const wName=w?.profiles?.full_name||'?';
 
     html.push(`<div class="sc"><h3>📅 Dagens detalje ${d.label.toLowerCase()}</h3>
+      <div class="row" style="background:${ds.visible?'var(--green-light)':'#fde7e7'};margin:-18px -18px 10px;padding:14px 18px;border-radius:14px 14px 0 0;border-bottom:2px solid ${ds.visible?'var(--green)':'var(--red)'}"><label style="font-weight:700;color:${ds.visible?'var(--green)':'var(--red)'}">👁️ Synlig for elever</label><label class="sw"><input type="checkbox" ${ds.visible?'checked':''} onchange="togVisible('${d.id}',this.checked)"><span class="sld"></span></label></div>
       <div class="row"><label>Deadline</label><input type="datetime-local" class="input" style="width:auto;padding:8px 10px;font-size:13px" value="${ds.deadline?new Date(ds.deadline).toISOString().slice(0,16):''}" onchange="updDl('${d.id}',this.value)"></div>
       <div class="row"><label>Lås for aflevering</label><label class="sw"><input type="checkbox" ${ds.locked?'checked':''} onchange="togLock('${d.id}',this.checked)"><span class="sld"></span></label></div>
       <div class="row"><label>Afleveringer</label><span style="font-weight:700;color:var(--ys)">${dSubs.length}</span></div>
@@ -663,6 +676,7 @@ async function renderSettings(){
 }
 async function updDl(d,v){await sb.from('day_settings').update({deadline:v?new Date(v).toISOString():null}).eq('day',d);renderSettings()}
 async function togLock(d,v){await sb.from('day_settings').update({locked:v}).eq('day',d);renderSettings()}
+async function togVisible(d,v){await sb.from('day_settings').update({visible:v}).eq('day',d);renderSettings()}
 async function relAll(d){
   if(!confirm(`Frigiv alle karakterer for ${d}?`))return;
   const all=await getAllSubs();
