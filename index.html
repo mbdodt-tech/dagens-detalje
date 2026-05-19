@@ -688,11 +688,6 @@ async function exportCSV(dayFilter){
   let maxPhotos=1;
   data.forEach(s=>{const n=parsePaths(s.photo_path).length;if(n>maxPhotos)maxPhotos=n});
 
-  // Generer signed URLs for alle billeder
-  const allPaths=[];
-  data.forEach(s=>parsePaths(s.photo_path).forEach(p=>{if(p)allPaths.push(p)}));
-  const urlMap=await photoUrls(allPaths,604800);
-
   const photoHeaders=[];
   for(let i=0;i<maxPhotos;i++) photoHeaders.push('Billede '+(i+1)+' (link)');
 
@@ -704,7 +699,7 @@ async function exportCSV(dayFilter){
     const photoLinks=[];
     for(let i=0;i<maxPhotos;i++){
       const path=paths[i];
-      photoLinks.push(path&&urlMap[path]?urlMap[path]:'');
+      photoLinks.push(path?`${SUPABASE_URL}/storage/v1/object/public/submission-photos/${path}`:'');
     }
     return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.feedback?.karakter||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
   });
