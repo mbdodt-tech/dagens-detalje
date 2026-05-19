@@ -27,7 +27,7 @@
   html,body{height:100%}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5;overflow-x:hidden}
   .app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative}
- 
+
   .topbar{background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;padding:18px 20px 22px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow-md)}
   .topbar .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:18px;font-weight:800}
   .topbar h1{font-size:17px;font-weight:700;line-height:1.2}
@@ -35,31 +35,31 @@
   .topbar .right{margin-left:auto;display:flex;gap:8px}
   .ib{background:rgba(255,255,255,.18);border:0;color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:16px;display:grid;place-items:center}
   .ib:active{transform:scale(.94)}
- 
+
   .content{padding:20px 18px 100px}
   .screen{display:none}.screen.active{display:block;animation:fadeIn .25s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
- 
+
   .hero{text-align:center;padding:30px 20px;background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;border-radius:var(--rl);margin-bottom:20px;box-shadow:var(--shadow-lg)}
   .hero .emoji{font-size:48px;margin-bottom:12px}
   .hero h2{font-size:22px;font-weight:800;margin-bottom:8px}
   .hero p{font-size:14px;opacity:.95}
- 
+
   .tabs{display:flex;gap:6px;background:var(--card);padding:4px;border-radius:100px;box-shadow:var(--shadow-sm);margin-bottom:18px}
   .tabs button{flex:1;padding:11px;background:0;border:0;border-radius:100px;font-weight:700;color:var(--ink-soft);cursor:pointer;font-size:14px;font-family:inherit}
   .tabs button.active{background:var(--ys);color:#fff}
- 
+
   .fg{margin-bottom:18px}
   .label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
   .label .req{color:var(--ys)} .label .help{display:block;font-size:12px;font-weight:500;color:var(--ink-soft);text-transform:none;letter-spacing:0;margin-top:4px}
   .input,.textarea{width:100%;padding:13px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;color:var(--ink);transition:border-color .15s,box-shadow .15s}
   .input:focus,.textarea:focus{outline:none;border-color:var(--ys);box-shadow:0 0 0 3px rgba(31,171,46,.1)}
   .textarea{resize:vertical;min-height:90px;line-height:1.5}
- 
+
   .tg{display:flex;gap:8px}
   .tb{flex:1;padding:12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .15s}
   .tb.active{background:var(--ys);color:#fff;border-color:var(--ys)}
- 
+
   .dg{display:flex;flex-direction:column;gap:12px}
   .dc{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
   .dc:active{transform:scale(.98)}
@@ -70,7 +70,7 @@
   .dc.locked{opacity:.7}
   .dc .badge{position:absolute;top:12px;right:12px;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px}
   .badge.gold{background:var(--gold)}.badge.green{background:var(--green)}.badge.red{background:var(--red)}
- 
+
   .pu{border:2.5px dashed var(--line);border-radius:14px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .18s;background:var(--card);position:relative;overflow:hidden}
   .pu:active{transform:scale(.99)}.pu:hover{border-color:var(--ys);background:var(--ys-light)}
   .pu.has{padding:0;border:none}
@@ -79,21 +79,21 @@
   .phi img{width:100%;height:100%;object-fit:cover;display:block}
   .phi .rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border:0;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;display:grid;place-items:center;backdrop-filter:blur(4px)}
   .pu .rp{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.65);color:#fff;border:0;padding:8px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;backdrop-filter:blur(8px)}
- 
+
   .btn{width:100%;padding:15px;background:var(--ys);color:#fff;border:0;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;box-shadow:0 4px 14px rgba(31,171,46,.3);font-family:inherit}
   .btn:active{transform:translateY(1px)}.btn:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
   .btn-s{background:var(--card);color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
   .btn-ok{background:var(--green);box-shadow:0 4px 14px rgba(0,168,107,.3)}
   .br{display:flex;gap:8px}.br .btn{flex:1}
- 
+
   .sb{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:14px 18px 22px;background:linear-gradient(to bottom,rgba(250,250,251,0) 0%,var(--bg) 30%);z-index:5}
- 
+
   .sh{font-size:11px;font-weight:700;color:var(--ys);letter-spacing:1px;text-transform:uppercase;margin:24px 0 12px}
- 
+
   .ib2{border-left:3px solid var(--gold);padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:18px;background:var(--gold-light);color:#6b5a00}
   .ib2.red{background:#fde7e7;border-color:var(--red);color:#7a1414}
   .ib2 strong{font-weight:700}
- 
+
   .gc{background:linear-gradient(135deg,var(--ys) 0%,var(--ys-dark) 100%);color:#fff;border-radius:var(--rl);padding:22px;margin-bottom:18px;box-shadow:var(--shadow-lg)}
   .gc.pending{background:linear-gradient(135deg,#6b6b6b 0%,#4a4a4a 100%);box-shadow:0 12px 40px rgba(0,0,0,.15)}
   .gc .gl{font-size:11px;opacity:.9;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
@@ -101,25 +101,25 @@
   .gc .gs{font-size:13px;opacity:.85}
   .gc .pt{font-size:22px;font-weight:700;margin:8px 0}
   .gc .ps{font-size:13px;opacity:.85;line-height:1.5}
- 
+
   .fc{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
   .fc h3{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
   .fc p{font-size:14px;line-height:1.6;color:var(--ink);white-space:pre-wrap}
   .fc ul{list-style:none}.fc li{font-size:14px;line-height:1.5;padding-left:22px;position:relative;margin-bottom:6px}
   .fc li.pos:before{content:"✓";color:var(--green);position:absolute;left:0;font-weight:700}
   .fc li.imp:before{content:"→";color:var(--ys);position:absolute;left:0;font-weight:700}
- 
+
   .lo{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
   .lo.show{display:flex}
   .sp{width:48px;height:48px;border:4px solid var(--ys-light);border-top-color:var(--ys);border-radius:50%;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .lo .tx{font-size:15px;font-weight:600;color:var(--ink)}
   .lo .st{font-size:13px;color:var(--ink-soft);max-width:280px}
- 
+
   .sr{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
   .st2{background:var(--card);padding:14px 10px;border-radius:12px;text-align:center;box-shadow:var(--shadow-sm)}
   .st2 .n{font-size:22px;font-weight:800;color:var(--ys)}.st2 .l{font-size:11px;color:var(--ink-soft);text-transform:uppercase;font-weight:600;letter-spacing:.5px;margin-top:2px}
- 
+
   .sl{display:flex;flex-direction:column;gap:10px}
   .si{background:var(--card);border-radius:12px;padding:14px;box-shadow:var(--shadow-sm);cursor:pointer;display:flex;gap:12px;transition:all .15s}
   .si:active{transform:scale(.99)}
@@ -129,20 +129,20 @@
   .si .gp{background:var(--ys);color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:700;align-self:center;min-width:36px;text-align:center}
   .si .gp.pending{background:var(--ink-faint)}.si .gp.released{background:var(--green)}
   .si.winner{border:2px solid var(--gold);background:linear-gradient(135deg,#fffbe7 0%,#fff8e1 100%)}
- 
+
   .chips{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
   .chip{padding:7px 14px;background:var(--card);border:1.5px solid var(--line);border-radius:100px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
   .chip.active{background:var(--ys);color:#fff;border-color:var(--ys)}
- 
+
   .empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}.empty .emoji{font-size:48px;margin-bottom:12px;opacity:.6}
- 
+
   .tag{display:inline-block;padding:3px 8px;background:var(--ys-light);color:var(--ys);border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
   .tag.gold{background:#fff3d0;color:#8b6f00}.tag.green{background:var(--green-light);color:#006442}
- 
+
   .sn{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:12px;line-height:1.5}
- 
+
   .rev{max-height:0;overflow:hidden;transition:max-height .3s ease}.rev.open{max-height:200px}
- 
+
   .sc{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
   .sc h3{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px}
   .sc .row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
@@ -153,12 +153,12 @@
   .sld{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--line);transition:.2s;border-radius:26px}
   .sld:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.15)}
   .sw input:checked+.sld{background:var(--green)}.sw input:checked+.sld:before{transform:translateX(20px)}
- 
+
   .wb{background:linear-gradient(135deg,var(--gold) 0%,#d99a00 100%);color:#fff;border-radius:var(--r);padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(245,180,0,.3)}
   .wb .trophy{font-size:28px}.wb .wt{font-size:13px;font-weight:600;line-height:1.4}.wb .wt strong{font-size:15px;display:block;font-weight:800}
- 
+
   .da{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.da .btn{padding:12px;font-size:14px;flex:1;min-width:140px}
- 
+
   .setup-msg{padding:40px 24px;text-align:center;font-family:system-ui;max-width:480px;margin:0 auto}
   .setup-msg h1{font-size:24px;margin-bottom:12px;color:var(--ys)}
   .setup-msg code{background:#f1f1f1;padding:2px 6px;border-radius:4px;font-size:13px}
@@ -176,7 +176,7 @@
     </div>
   </div>
   <div class="content">
- 
+
     <!-- AUTH -->
     <div class="screen active" id="s-auth">
       <div class="hero"><div class="emoji">🛍️</div><h2>Velkommen til Hamborg!</h2><p>Find dagens detalje, tag et billede, og del din analyse.</p></div>
@@ -189,7 +189,7 @@
       <div class="fg"><label class="label">Adgangskode <span class="req">*</span></label><input class="input" id="auPw" placeholder="Min. 6 tegn" type="password"></div>
       <button class="btn" id="authBtn" onclick="doAuth()">Opret bruger →</button>
     </div>
- 
+
     <!-- HOME -->
     <div class="screen" id="s-home">
       <div style="margin-bottom:20px"><div style="font-size:13px;color:var(--ink-soft);font-weight:600">Hej <span id="greetName">elev</span> 👋</div><div style="font-size:22px;font-weight:800;margin-top:2px">Vælg dagens projekt</div></div>
@@ -197,7 +197,7 @@
       <div id="winnerNotice"></div>
       <div class="dg" id="dayGrid"></div>
     </div>
- 
+
     <!-- FORM -->
     <div class="screen" id="s-form">
       <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center"><div class="tag" id="formTag">Tirsdag</div><div id="formDl"></div></div>
@@ -221,10 +221,10 @@
       <div class="fg"><label class="label">Er butikken et "must-see" for resten af holdet? <span class="req">*</span><span class="help">Begrund dit svar.</span></label><textarea class="textarea" id="fMus" rows="3" placeholder="Begrund dit svar..."></textarea></div>
       <div style="height:80px"></div>
     </div>
- 
+
     <!-- DETAIL -->
     <div class="screen" id="s-detail"><div id="detC"></div></div>
- 
+
     <!-- TEACHER -->
     <div class="screen" id="s-teacher">
       <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:end">
@@ -236,16 +236,16 @@
       <div class="chips" id="filterChips"><div class="chip active" data-day="all" onclick="setFilter('all')">Alle</div><div class="chip" data-day="tirsdag" onclick="setFilter('tirsdag')">Tirsdag</div><div class="chip" data-day="onsdag" onclick="setFilter('onsdag')">Onsdag</div><div class="chip" data-day="torsdag" onclick="setFilter('torsdag')">Torsdag</div></div>
       <div class="sl" id="subList"></div>
     </div>
- 
+
     <!-- SETTINGS -->
     <div class="screen" id="s-settings"><div style="margin-bottom:18px"><div style="font-size:13px;color:var(--ink-soft);font-weight:600">Lærer-styring</div><div style="font-size:22px;font-weight:800;margin-top:2px">Indstillinger pr. dag</div></div><div id="setC"></div></div>
- 
+
   </div>
   <div class="sb" id="subBar" style="display:none"><button class="btn" id="subBtn" onclick="submitForm()">Indsend & få bedømmelse</button></div>
 </div>
- 
+
 <div class="lo" id="loader"><div class="sp"></div><div class="tx" id="loaderTx">Bedømmer din analyse...</div><div class="st">Claude vurderer din brug af teori, billedets stop-effekt og din opgaveløsning</div></div>
- 
+
 <script>
 // ╔══════════════════════════════════════════════════════╗
 // ║  KONFIGURATION — UDFYLD DISSE FØR BRUG              ║
@@ -254,18 +254,18 @@
 const SUPABASE_URL  = 'https://jvxsjxpstlbviasjeiau.supabase.co';
 const SUPABASE_KEY  = 'sb_publishable_aGv0xmvpDnmUxmUhDfr9Ig_M9uDjfao';
 // ════════════════════════════════════════════════════════
- 
+
 if (SUPABASE_URL === 'UDFYLD_MIG') {
   document.querySelector('.app').innerHTML = '<div class="setup-msg"><h1>🔧 Opsætning påkrævet</h1><p>Åbn denne fil i en teksteditor og udfyld <code>SUPABASE_URL</code> og <code>SUPABASE_KEY</code> øverst i script-blokken med dine værdier fra Supabase → Settings → API.</p><p style="margin-top:16px">Se deployment-guiden for trin-for-trin instruktioner.</p></div>';
 }
- 
+
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
- 
+
 const DAYS = [{id:'tirsdag',label:'Tirsdag',e:'Ti'},{id:'onsdag',label:'Onsdag',e:'On'},{id:'torsdag',label:'Torsdag',e:'To'}];
- 
+
 const S = { user:null, profile:null, role:'student', tab:'su', currentDay:null, editingId:null, filter:'all' };
 let photos=[], existingPaths=[];
- 
+
 // === NAV ===
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -282,7 +282,7 @@ function toggleRole(){
   document.getElementById('roleBtn').textContent=S.role==='teacher'?'🎓':'👤';
   S.role==='teacher'?(show('teacher'),renderTeacher()):(show('home'),renderHome());
 }
- 
+
 // === AUTH ===
 function setTab(t){
   S.tab=t;
@@ -291,13 +291,13 @@ function setTab(t){
   document.getElementById('suFields').style.display=t==='su'?'block':'none';
   document.getElementById('authBtn').textContent=t==='su'?'Opret bruger →':'Log ind →';
 }
- 
+
 async function doAuth(){
   const email=document.getElementById('auEmail').value.trim().toLowerCase();
   const pw=document.getElementById('auPw').value;
   if(!email||!email.includes('@')){alert('Indtast en gyldig email');return}
   if(pw.length<6){alert('Adgangskode skal være mindst 6 tegn');return}
- 
+
   if(S.tab==='su'){
     const name=document.getElementById('suName').value.trim();
     const cls=document.getElementById('suClass').value.trim();
@@ -313,7 +313,7 @@ async function doAuth(){
   await loadProfile();
   show('home');renderHome();
 }
- 
+
 async function loadProfile(){
   if(!S.user) return;
   const{data}=await sb.from('profiles').select('*').eq('id',S.user.id).single();
@@ -323,7 +323,7 @@ async function loadProfile(){
   document.getElementById('roleBtn').textContent=S.role==='teacher'?'🎓':'👤';
   document.getElementById('logoutBtn').style.display='grid';
 }
- 
+
 async function doLogout(){
   await sb.auth.signOut();
   S.user=null;S.profile=null;S.role='student';
@@ -331,7 +331,7 @@ async function doLogout(){
   document.getElementById('logoutBtn').style.display='none';
   show('auth');setTab('su');
 }
- 
+
 // === DATA ===
 async function getMySubs(){
   const{data}=await sb.from('submissions').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false});
@@ -350,19 +350,19 @@ async function photoUrl(path){
   const{data}=await sb.storage.from('submission-photos').createSignedUrl(path,3600);
   return data?.signedUrl||'';
 }
-async function photoUrls(paths){
+async function photoUrls(paths,expiry){
   const valid=paths.filter(Boolean);
   if(!valid.length)return{};
-  const{data}=await sb.storage.from('submission-photos').createSignedUrls(valid,3600);
+  const{data}=await sb.storage.from('submission-photos').createSignedUrls(valid,expiry||3600);
   const m={};(data||[]).forEach(i=>{m[i.path]=i.signedUrl});return m;
 }
- 
+
 // === HOME ===
 async function renderHome(){
   document.getElementById('greetName').textContent=S.profile?.full_name?.split(' ')[0]||'elev';
   const my=await getMySubs();
   const grid=document.getElementById('dayGrid');
- 
+
   const wh=[];
   for(const d of DAYS){
     const ds=await getDaySetting(d.id);
@@ -374,14 +374,14 @@ async function renderHome(){
     }
   }
   document.getElementById('winnerNotice').innerHTML=wh.join('');
- 
+
   grid.innerHTML='';
   for(const d of DAYS){
     const ds=await getDaySetting(d.id);
     const s=my.find(x=>x.day===d.id);
     const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
     const isLocked=ds.locked||(dlMs&&dlMs<now);
- 
+
     let status='Ikke afleveret',badge='';
     if(s){
       if(s.released&&s.feedback?.karakter){status=`Karakter: ${s.feedback.karakter}`;badge='<div class="badge green">Bedømt</div>'}
@@ -389,7 +389,7 @@ async function renderHome(){
       else{status='Afleveret — bedømmes';badge='<div class="badge gold">Afleveret</div>'}
     } else if(isLocked){status='Lukket';badge='<div class="badge red">Lukket</div>'}
     else if(dlMs){status=`Deadline om ${fmtCd(dlMs-now)}`}
- 
+
     const c=document.createElement('div');
     c.className='dc'+(s?' done':'')+(isLocked&&!s?' locked':'');
     c.innerHTML=`<div class="di">${d.e}</div><div style="flex:1;min-width:0"><div class="dt">Dagens detalje ${d.label.toLowerCase()}</div><div class="ds">${status}</div></div>${isLocked?'<span style="font-size:16px;color:var(--ink-faint)">🔒</span>':'<span style="font-size:18px;color:var(--ink-faint)">›</span>'}${badge}`;
@@ -401,10 +401,10 @@ async function renderHome(){
     grid.appendChild(c);
   }
 }
- 
+
 function fmtCd(ms){if(ms<0)return'0 min';const h=Math.floor(ms/36e5),m=Math.floor((ms%36e5)/6e4);return h>24?Math.floor(h/24)+' dage':h>0?`${h}t ${m}m`:`${m} min`}
 function fmtDl(iso){return new Date(iso).toLocaleString('da-DK',{weekday:'short',hour:'2-digit',minute:'2-digit'})}
- 
+
 // === FORM ===
 function resetForm(){
   photos=[];existingPaths=[];
@@ -417,7 +417,7 @@ function resetForm(){
   document.getElementById('fSus').value='';
   setSus(false);
 }
- 
+
 async function loadForEdit(sub){
   S.editingId=sub.id;S.currentDay=sub.day;
   document.getElementById('formTag').textContent=`Rediger ${sub.day}`;
@@ -439,24 +439,24 @@ async function loadForEdit(sub){
   setSus(!!sub.sustainability);
   show('form');
 }
- 
+
 function parsePaths(pp){try{const a=JSON.parse(pp);return Array.isArray(a)?a:[pp]}catch{return pp?[pp]:[]}}
- 
+
 function renderPhotoGrid(){
   const grid=document.getElementById('photoGrid');
   grid.innerHTML=photos.map((p,i)=>`<div class="phi"><img src="${p.preview}" alt=""><button class="rm" onclick="removePhoto(${i})">×</button></div>`).join('');
   document.getElementById('phAdd').style.display=photos.length>=10?'none':'block';
 }
- 
+
 function removePhoto(i){photos.splice(i,1);renderPhotoGrid()}
- 
+
 function setSus(v){
   document.getElementById('susY').classList.toggle('active',v);
   document.getElementById('susN').classList.toggle('active',!v);
   document.getElementById('susRev').classList.toggle('open',v);
   if(!v)document.getElementById('fSus').value='';
 }
- 
+
 function handlePhotos(e){
   const files=Array.from(e.target.files);if(!files.length)return;
   files.forEach(f=>{
@@ -473,7 +473,7 @@ function handlePhotos(e){
   });
   e.target.value='';
 }
- 
+
 async function submitForm(){
   const butik=document.getElementById('fBut').value.trim();
   const det=document.getElementById('fDet').value.trim();
@@ -481,16 +481,16 @@ async function submitForm(){
   const mus=document.getElementById('fMus').value.trim();
   if(!photos.length){alert('Tilføj mindst ét billede');return}
   if(!butik||!det||!you||!mus){alert('Udfyld alle felter markeret med *');return}
- 
+
   const sus=document.getElementById('susY').classList.contains('active');
   const susC=document.getElementById('fSus').value.trim();
- 
+
   const ds=await getDaySetting(S.currentDay);
   const now=Date.now(),dlMs=ds.deadline?new Date(ds.deadline).getTime():null;
   if(ds.locked||(dlMs&&dlMs<now)){alert('Denne dag er lukket.');return}
- 
+
   showLoader('Uploader billeder...');
- 
+
   const allPaths=[];
   for(let i=0;i<photos.length;i++){
     const ph=photos[i];
@@ -501,9 +501,9 @@ async function submitForm(){
     allPaths.push(pp);
   }
   showLoader('Bedømmer din analyse...');
- 
+
   const row={user_id:S.user.id,day:S.currentDay,butik,detalje:det,yousee_use:you,must_see:mus,sustainability:sus,sustainability_comment:sus?susC:'',dato:document.getElementById('fDat').value||null,photo_path:JSON.stringify(allPaths),grade:null,feedback:null,grading_error:null,released:false};
- 
+
   let saved;
   if(S.editingId){
     const{data,error}=await sb.from('submissions').update(row).eq('id',S.editingId).select().single();
@@ -514,18 +514,18 @@ async function submitForm(){
     if(error){hideLoader();alert('Fejl: '+error.message);return}
     saved=data;
   }
- 
+
   try{
     await sb.functions.invoke('grade-submission',{body:{submission_id:saved.id}});
     const{data:upd}=await sb.from('submissions').select('*').eq('id',saved.id).single();
     if(upd) saved=upd;
   }catch(err){console.error('Grading error:',err)}
- 
+
   hideLoader();
   S.editingId=null;
   show('detail');renderDetail(saved);
 }
- 
+
 // === DETAIL ===
 async function renderDetail(sub){
   const el=document.getElementById('detC');
@@ -539,7 +539,7 @@ async function renderDetail(sub){
   const showG=isT||(isOwner&&sub.released);
   const allPaths=parsePaths(sub.photo_path);
   const pUrls=[];for(const p of allPaths){pUrls.push(await photoUrl(p))}
- 
+
   let gb='';
   if(showG&&fb){
     gb=`<div class="gc"><div class="gl">${isT&&!sub.released?'Foreslået karakter':'Karakter'}</div><div class="gn">${fb.karakter}</div><div class="gs">12-skalaen${isT&&!sub.released?' • Ikke frigivet':''}</div></div>
@@ -556,7 +556,7 @@ async function renderDetail(sub){
   } else if(isOwner){
     gb='<div class="gc pending"><div class="gl">Status</div><div class="pt">Bedømmes...</div></div>';
   }
- 
+
   let act='';
   if(isT){
     act=`<div class="da">${fb?`<button class="btn ${sub.released?'btn-s':'btn-ok'}" onclick="toggleRelease('${sub.id}')">${sub.released?'🔒 Skjul karakter':'✅ Frigiv karakter'}</button>`:''}<button class="btn" style="background:${ds.winner_id===sub.id?'var(--card)':'var(--gold)'};color:${ds.winner_id===sub.id?'var(--ink)':'#fff'};border:${ds.winner_id===sub.id?'1.5px solid var(--line)':'0'};box-shadow:${ds.winner_id===sub.id?'none':'0 4px 14px rgba(245,180,0,.3)'}" onclick="toggleWinner('${sub.id}')">${ds.winner_id===sub.id?'🏆 Fjern som vinder':'🏆 Kår som vinder'}</button></div>`;
@@ -565,9 +565,9 @@ async function renderDetail(sub){
   } else if(isOwner&&isLocked){
     act='<div class="ib2 red">🔒 Dagen er lukket — du kan ikke længere redigere.</div>';
   }
- 
+
   const profLine=isT&&sub.profiles?`<div style="margin-bottom:14px;font-size:13px;color:var(--ink-soft)"><strong>${esc(sub.profiles.full_name)}</strong> · ${esc(sub.profiles.class_group)} · ${esc(sub.profiles.email)}</div>`:'';
- 
+
   el.innerHTML=`
     <div style="margin-bottom:14px"><div class="tag">Dagens detalje ${dl.toLowerCase()}</div>${sub.sustainability?' <span class="tag gold">🌱 Bæredygtighed</span>':''}${ds.winner_id===sub.id?' <span class="tag gold">🏆 Vinder</span>':''}${sub.released?' <span class="tag green">Frigivet</span>':''}</div>
     ${profLine}${act}${gb}
@@ -578,7 +578,7 @@ async function renderDetail(sub){
     <div class="fc"><h3>Kan bruges i youSee?</h3><p>${esc(sub.yousee_use)}</p></div>
     <div class="fc"><h3>Must-see for holdet?</h3><p>${esc(sub.must_see)}</p></div>`;
 }
- 
+
 async function editSub(id){
   const{data}=await sb.from('submissions').select('*').eq('id',id).single();
   if(data) loadForEdit(data);
@@ -597,7 +597,7 @@ async function toggleWinner(id){
   const{data:upd}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
   renderDetail(upd);
 }
- 
+
 // === TEACHER ===
 async function renderTeacher(){
   const all=await getAllSubs();
@@ -605,17 +605,17 @@ async function renderTeacher(){
   const avg=grades.length?(grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(1):'–';
   const uniq=new Set(all.map(s=>s.user_id)).size;
   document.getElementById('statsRow').innerHTML=`<div class="st2"><div class="n">${all.length}</div><div class="l">Besvarelser</div></div><div class="st2"><div class="n">${uniq}</div><div class="l">Elever</div></div><div class="st2"><div class="n">${avg}</div><div class="l">Snit</div></div>`;
- 
+
   const filtered=S.filter==='all'?all:all.filter(s=>s.day===S.filter);
   const list=document.getElementById('subList');
   if(!filtered.length){list.innerHTML='<div class="empty"><div class="emoji">📭</div><p>Ingen besvarelser endnu</p></div>';return}
- 
+
   const winners={};
   for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
- 
+
   const thumbPaths=filtered.map(s=>parsePaths(s.photo_path)[0]).filter(Boolean);
   const urls=await photoUrls(thumbPaths);
- 
+
   list.innerHTML=filtered.map(s=>{
     const p=s.profiles||{};
     const fp=parsePaths(s.photo_path)[0]||'';
@@ -626,7 +626,7 @@ async function renderTeacher(){
       <div class="gp ${s.feedback?.karakter?(s.released?'released':''):'pending'}">${s.feedback?.karakter||'...'}</div></div>`
   }).join('');
 }
- 
+
 async function openSub(id){
   const{data}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
   if(data){show('detail');renderDetail(data)}
@@ -636,7 +636,7 @@ function setFilter(d){
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.day===d));
   renderTeacher();
 }
- 
+
 // === SETTINGS ===
 async function renderSettings(){
   const html=[];
@@ -647,7 +647,7 @@ async function renderSettings(){
     const rel=dSubs.filter(x=>x.released).length;
     const w=ds.winner_id?all.find(x=>x.id===ds.winner_id):null;
     const wName=w?.profiles?.full_name||'?';
- 
+
     html.push(`<div class="sc"><h3>📅 Dagens detalje ${d.label.toLowerCase()}</h3>
       <div class="row"><label>Deadline</label><input type="datetime-local" class="input" style="width:auto;padding:8px 10px;font-size:13px" value="${ds.deadline?new Date(ds.deadline).toISOString().slice(0,16):''}" onchange="updDl('${d.id}',this.value)"></div>
       <div class="row"><label>Lås for aflevering</label><label class="sw"><input type="checkbox" ${ds.locked?'checked':''} onchange="togLock('${d.id}',this.checked)"><span class="sld"></span></label></div>
@@ -675,28 +675,53 @@ async function togWR(d){
   await sb.from('day_settings').update({winner_released:!ds.winner_released}).eq('day',d);
   renderSettings();
 }
- 
+
 // === CSV ===
 async function exportCSV(dayFilter){
   const all=await getAllSubs();
   const data=(dayFilter&&dayFilter!=='all')?all.filter(s=>s.day===dayFilter):all;
   if(!data.length){alert('Ingen besvarelser');return}
+  showLoader('Genererer CSV med billedlinks...');
   const winners={};for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
-  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt'];
-  const rows=data.map(s=>{const p=s.profiles||{};return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.feedback?.karakter||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK')]});
+
+  // Find max antal billeder (for kolonner)
+  let maxPhotos=1;
+  data.forEach(s=>{const n=parsePaths(s.photo_path).length;if(n>maxPhotos)maxPhotos=n});
+
+  // Generer signed URLs for alle billeder
+  const allPaths=[];
+  data.forEach(s=>parsePaths(s.photo_path).forEach(p=>{if(p)allPaths.push(p)}));
+  const urlMap=await photoUrls(allPaths,604800);
+
+  const photoHeaders=[];
+  for(let i=0;i<maxPhotos;i++) photoHeaders.push('Billede '+(i+1)+' (link)');
+
+  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt',...photoHeaders];
+
+  const rows=data.map(s=>{
+    const p=s.profiles||{};
+    const paths=parsePaths(s.photo_path);
+    const photoLinks=[];
+    for(let i=0;i<maxPhotos;i++){
+      const path=paths[i];
+      photoLinks.push(path&&urlMap[path]?urlMap[path]:'');
+    }
+    return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.feedback?.karakter||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
+  });
   const ce=v=>{const s=String(v??'').replace(/\r?\n/g,' ');return /[",;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
   const csv='\ufeff'+[h,...rows].map(r=>r.map(ce).join(';')).join('\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`dagens-detalje-${dayFilter&&dayFilter!=='all'?dayFilter:'alle'}-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();URL.revokeObjectURL(a.href);
+  hideLoader();
 }
- 
+
 // === UTILS ===
 function showLoader(t){document.getElementById('loaderTx').textContent=t||'Arbejder...';document.getElementById('loader').classList.add('show')}
 function hideLoader(){document.getElementById('loader').classList.remove('show')}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
- 
+
 // === INIT ===
 (async()=>{
   if(SUPABASE_URL==='UDFYLD_MIG')return;
@@ -715,4 +740,3 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 </script>
 </body>
 </html>
- 
