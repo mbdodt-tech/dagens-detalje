@@ -553,8 +553,33 @@ async function renderDetail(sub){
   const pUrls=[];for(const p of allPaths){pUrls.push(await photoUrl(p))}
 
   let gb='';
-  if(showG&&fb){
-    gb=`<div class="gc"><div class="gl">${isT&&!sub.released?'Foreslået karakter':'Karakter'}</div><div class="gn">${fb.karakter}</div><div class="gs">12-skalaen${isT&&!sub.released?' • Ikke frigivet':''}</div></div>
+  const finalGrade=sub.grade||fb?.karakter||'';
+  const aiGrade=fb?.karakter||'';
+  const teacherComment=fb?.teacher_comment||'';
+  const gradeChanged=finalGrade!==aiGrade&&aiGrade;
+
+  if(isT&&fb){
+    gb=`<div class="gc"><div class="gl">Endelig karakter${gradeChanged?' (justeret af lærer)':''}</div><div class="gn">${esc(finalGrade)}</div><div class="gs">12-skalaen${!sub.released?' • Ikke frigivet':''}</div></div>
+    <div class="sc" style="border:2px solid var(--ys)">
+      <h3>✏️ Lærerjustering</h3>
+      <div class="row"><label>Justér karakter</label>
+        <select class="input" style="width:auto;padding:8px 12px;font-size:14px;font-weight:700" id="teacherGrade" onchange="markGradeChanged()">
+          ${['-3','00','02','4','7','10','12'].map(g=>`<option value="${g}" ${g===finalGrade?'selected':''}>${g}</option>`).join('')}
+        </select>
+      </div>
+      <div style="margin-top:10px"><label class="label">Lærerkommentar til eleven</label><textarea class="textarea" id="teacherComment" rows="3" placeholder="Valgfri kommentar der vises sammen med karakteren...">${esc(teacherComment)}</textarea></div>
+      <button class="btn" style="margin-top:12px" onclick="saveTeacherGrade('${sub.id}')">💾 Gem ændringer</button>
+      ${gradeChanged?`<div style="margin-top:8px;font-size:12px;color:var(--ink-soft)">AI foreslog: ${esc(aiGrade)} — du har ændret til: ${esc(finalGrade)}</div>`:''}
+    </div>
+    <div class="fc"><h3>🤖 AI-feedback</h3><p>${esc(fb.samletFeedback||'')}</p></div>
+    <div class="fc"><h3>📚 Teoribrug</h3><p>${esc(fb.teoriBrug||'')}</p></div>
+    <div class="fc"><h3>👁️ Stop-effekt</h3><p>${esc(fb.stopeffekt||'')}</p></div>
+    <div class="fc"><h3>📋 Opgaveløsning</h3><p>${esc(fb.opgaveloesning||'')}</p></div>
+    <div class="fc"><h3>✓ Stærke sider</h3><ul>${(fb.staerkeSider||[]).map(p=>`<li class="pos">${esc(p)}</li>`).join('')}</ul></div>
+    <div class="fc"><h3>→ Forbedringsmuligheder</h3><ul>${(fb.forbedringsmuligheder||[]).map(p=>`<li class="imp">${esc(p)}</li>`).join('')}</ul></div>`;
+  } else if(showG&&fb){
+    gb=`<div class="gc"><div class="gl">Karakter${gradeChanged?' (justeret af lærer)':''}</div><div class="gn">${esc(finalGrade)}</div><div class="gs">12-skalaen</div></div>
+    ${teacherComment?`<div class="fc" style="border-left:3px solid var(--ys)"><h3>💬 Kommentar fra lærer</h3><p>${esc(teacherComment)}</p></div>`:''}
     <div class="fc"><h3>📝 Samlet feedback</h3><p>${esc(fb.samletFeedback||'')}</p></div>
     <div class="fc"><h3>📚 Teoribrug</h3><p>${esc(fb.teoriBrug||'')}</p></div>
     <div class="fc"><h3>👁️ Stop-effekt</h3><p>${esc(fb.stopeffekt||'')}</p></div>
@@ -609,6 +634,18 @@ async function toggleWinner(id){
   const{data:upd}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
   renderDetail(upd);
 }
+async function saveTeacherGrade(id){
+  const newGrade=document.getElementById('teacherGrade').value;
+  const comment=document.getElementById('teacherComment').value.trim();
+  const{data:sub}=await sb.from('submissions').select('feedback').eq('id',id).single();
+  const fb=sub.feedback||{};
+  fb.teacher_comment=comment;
+  await sb.from('submissions').update({grade:newGrade,feedback:fb}).eq('id',id);
+  alert('Karakter og kommentar gemt!');
+  const{data:upd}=await sb.from('submissions').select('*,profiles(full_name,class_group,email)').eq('id',id).single();
+  renderDetail(upd);
+}
+function markGradeChanged(){document.getElementById('teacherGrade').style.borderColor='var(--ys)'}
 
 // === TEACHER ===
 async function renderTeacher(){
@@ -705,7 +742,7 @@ async function exportCSV(dayFilter){
   const photoHeaders=[];
   for(let i=0;i<maxPhotos;i++) photoHeaders.push('Billede '+(i+1)+' (link)');
 
-  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt',...photoHeaders];
+  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter (endelig)','AI-karakter','Lærerkommentar','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt',...photoHeaders];
 
   const rows=data.map(s=>{
     const p=s.profiles||{};
@@ -715,7 +752,7 @@ async function exportCSV(dayFilter){
       const path=paths[i];
       photoLinks.push(path?`${SUPABASE_URL}/storage/v1/object/public/submission-photos/${path}`:'');
     }
-    return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.feedback?.karakter||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
+    return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.grade||'',s.feedback?.karakter||'',s.feedback?.teacher_comment||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
   });
   const ce=v=>{const s=String(v??'').replace(/\r?\n/g,' ');return /[",;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
   const csv='\ufeff'+[h,...rows].map(r=>r.map(ce).join(';')).join('\n');
