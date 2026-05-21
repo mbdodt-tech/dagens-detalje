@@ -650,14 +650,15 @@ function markGradeChanged(){document.getElementById('teacherGrade').style.border
 // === TEACHER ===
 async function renderTeacher(){
   const all=await getAllSubs();
-  const grades=all.filter(s=>s.feedback?.karakter).map(s=>{const k=s.feedback.karakter;return k==='-3'?-3:k==='00'?0:k==='02'?2:parseInt(k)});
-  const avg=grades.length?(grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(1):'–';
-  const uniq=new Set(all.map(s=>s.user_id)).size;
-  document.getElementById('statsRow').innerHTML=`<div class="st2"><div class="n">${all.length}</div><div class="l">Besvarelser</div></div><div class="st2"><div class="n">${uniq}</div><div class="l">Elever</div></div><div class="st2"><div class="n">${avg}</div><div class="l">Snit</div></div>`;
-
   const filtered=S.filter==='all'?all:all.filter(s=>s.day===S.filter);
+  const filterLabel=S.filter==='all'?'alle dage':S.filter;
+  const grades=filtered.filter(s=>s.grade).map(s=>{const k=s.grade;return k==='-3'?-3:k==='00'?0:k==='02'?2:parseInt(k)});
+  const avg=grades.length?(grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(1):'–';
+  const uniq=new Set(filtered.map(s=>s.user_id)).size;
+  document.getElementById('statsRow').innerHTML=`<div class="st2"><div class="n">${filtered.length}</div><div class="l">Besvarelser</div></div><div class="st2"><div class="n">${uniq}</div><div class="l">Elever</div></div><div class="st2"><div class="n">${avg}</div><div class="l">Snit</div></div>`;
+
   const list=document.getElementById('subList');
-  if(!filtered.length){list.innerHTML='<div class="empty"><div class="emoji">📭</div><p>Ingen besvarelser endnu</p></div>';return}
+  if(!filtered.length){list.innerHTML='<div class="empty"><div class="emoji">📭</div><p>Ingen besvarelser for '+filterLabel+'</p></div>';return}
 
   const winners={};
   for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
@@ -699,7 +700,7 @@ async function renderSettings(){
 
     html.push(`<div class="sc"><h3>📅 Dagens detalje ${d.label.toLowerCase()}</h3>
       <div class="row" style="background:${ds.visible?'var(--green-light)':'#fde7e7'};margin:-18px -18px 10px;padding:14px 18px;border-radius:14px 14px 0 0;border-bottom:2px solid ${ds.visible?'var(--green)':'var(--red)'}"><label style="font-weight:700;color:${ds.visible?'var(--green)':'var(--red)'}">👁️ Synlig for elever</label><label class="sw"><input type="checkbox" ${ds.visible?'checked':''} onchange="togVisible('${d.id}',this.checked)"><span class="sld"></span></label></div>
-      <div class="row"><label>Deadline</label><input type="datetime-local" class="input" style="width:auto;padding:8px 10px;font-size:13px" value="${ds.deadline?new Date(ds.deadline).toISOString().slice(0,16):''}" onchange="updDl('${d.id}',this.value)"></div>
+      <div class="row"><label>Deadline</label><div style="display:flex;gap:6px;align-items:center"><input type="datetime-local" class="input" style="width:auto;padding:8px 10px;font-size:13px" id="dl_${d.id}" value="${ds.deadline?new Date(ds.deadline).toISOString().slice(0,16):''}" onchange="updDl('${d.id}')" onblur="updDl('${d.id}')"><button class="btn btn-s" style="width:auto;padding:8px 12px;font-size:12px" onclick="updDl('${d.id}')">Gem</button></div></div>
       <div class="row"><label>Lås for aflevering</label><label class="sw"><input type="checkbox" ${ds.locked?'checked':''} onchange="togLock('${d.id}',this.checked)"><span class="sld"></span></label></div>
       <div class="row"><label>Afleveringer</label><span style="font-weight:700;color:var(--ys)">${dSubs.length}</span></div>
       <div class="row"><label>Frigivet</label><span style="font-weight:700">${rel}/${dSubs.length}</span></div>
@@ -711,7 +712,16 @@ async function renderSettings(){
   }
   document.getElementById('setC').innerHTML=html.join('');
 }
-async function updDl(d,v){await sb.from('day_settings').update({deadline:v?new Date(v).toISOString():null}).eq('day',d);renderSettings()}
+async function updDl(d){
+  const el=document.getElementById('dl_'+d);
+  const v=el?el.value:'';
+  const deadline=v?new Date(v).toISOString():null;
+  const{error}=await sb.from('day_settings').update({deadline}).eq('day',d);
+  if(!error){
+    el.style.borderColor='var(--green)';
+    setTimeout(()=>{if(el)el.style.borderColor=''},1500);
+  }
+}
 async function togLock(d,v){await sb.from('day_settings').update({locked:v}).eq('day',d);renderSettings()}
 async function togVisible(d,v){await sb.from('day_settings').update({visible:v}).eq('day',d);renderSettings()}
 async function relAll(d){
