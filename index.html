@@ -572,6 +572,14 @@ async function renderDetail(sub){
       <button class="btn" style="margin-top:12px" onclick="saveTeacherGrade('${sub.id}')">💾 Gem ændringer</button>
       ${gradeChanged?`<div style="margin-top:8px;font-size:12px;color:var(--ink-soft)">AI foreslog: ${esc(aiGrade)} — du har ændret til: ${esc(finalGrade)}</div>`:''}
     </div>
+    ${fb.aiSandsynlighed?`<div class="fc" style="border-left:3px solid ${fb.aiSandsynlighed==='høj'?'var(--red)':fb.aiSandsynlighed==='middel'?'var(--gold)':'var(--green)'}">
+      <h3>🤖 AI-detektion (kun synlig for dig)</h3>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:24px;font-weight:800;color:${fb.aiSandsynlighed==='høj'?'var(--red)':fb.aiSandsynlighed==='middel'?'var(--gold)':'var(--green)'}">${fb.aiProcent||'?'}%</span>
+        <span style="font-size:14px;font-weight:700;padding:4px 10px;border-radius:8px;color:white;background:${fb.aiSandsynlighed==='høj'?'var(--red)':fb.aiSandsynlighed==='middel'?'var(--gold)':'var(--green)'}">${fb.aiSandsynlighed==='høj'?'Høj sandsynlighed':fb.aiSandsynlighed==='middel'?'Middel sandsynlighed':'Lav sandsynlighed'}</span>
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft)">${esc(fb.aiVurdering||'')}</p>
+    </div>`:''}
     <div class="fc"><h3>🤖 AI-feedback</h3><p>${esc(fb.samletFeedback||'')}</p></div>
     <div class="fc"><h3>📚 Teoribrug</h3><p>${esc(fb.teoriBrug||'')}</p></div>
     <div class="fc"><h3>👁️ Stop-effekt</h3><p>${esc(fb.stopeffekt||'')}</p></div>
@@ -764,7 +772,7 @@ async function exportCSV(dayFilter){
   const photoHeaders=[];
   for(let i=0;i<maxPhotos;i++) photoHeaders.push('Billede '+(i+1)+' (link)');
 
-  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter (endelig)','AI-karakter','Lærerkommentar','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','Indsendt',...photoHeaders];
+  const h=['Dag','Navn','Hold','Email','Butik','Dato','Bæredygtighed','Bæredygtighedskommentar','Detalje','Kan bruges i youSee','Must-see','Karakter (endelig)','AI-karakter','Lærerkommentar','Frigivet','Vinder','Stop-effekt','Teoribrug','Opgaveløsning','Samlet feedback','AI-sandsynlighed','AI-procent','AI-vurdering','Indsendt',...photoHeaders];
 
   const rows=data.map(s=>{
     const p=s.profiles||{};
@@ -774,7 +782,7 @@ async function exportCSV(dayFilter){
       const path=paths[i];
       photoLinks.push(path?`${SUPABASE_URL}/storage/v1/object/public/submission-photos/${path}`:'');
     }
-    return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.grade||'',s.feedback?.karakter||'',s.feedback?.teacher_comment||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
+    return[s.day,p.full_name||'',p.class_group||'',p.email||'',s.butik,s.dato||'',s.sustainability?'Ja':'Nej',s.sustainability_comment||'',s.detalje,s.yousee_use,s.must_see,s.grade||'',s.feedback?.karakter||'',s.feedback?.teacher_comment||'',s.released?'Ja':'Nej',winners[s.id]?'Ja':'Nej',s.feedback?.stopeffekt||'',s.feedback?.teoriBrug||'',s.feedback?.opgaveloesning||'',s.feedback?.samletFeedback||'',s.feedback?.aiSandsynlighed||'',s.feedback?.aiProcent!=null?s.feedback.aiProcent:'',s.feedback?.aiVurdering||'',new Date(s.created_at).toLocaleString('da-DK'),...photoLinks];
   });
   const ce=v=>{const s=String(v??'').replace(/\r?\n/g,' ');return /[",;]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
   const csv='\ufeff'+[h,...rows].map(r=>r.map(ce).join(';')).join('\n');
