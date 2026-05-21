@@ -397,8 +397,8 @@ async function renderHome(){
 
     let status='Ikke afleveret',badge='';
     if(s){
-      if(s.released&&s.feedback?.karakter){status=`Karakter: ${s.feedback.karakter}`;badge='<div class="badge green">Bedømt</div>'}
-      else if(s.feedback?.karakter){status='Afleveret — venter på frigivelse';badge='<div class="badge gold">Afleveret</div>'}
+      if(s.released&&s.grade){status=`Karakter: ${s.grade}`;badge='<div class="badge green">Bedømt</div>'}
+      else if(s.grade){status='Afleveret — venter på frigivelse';badge='<div class="badge gold">Afleveret</div>'}
       else{status='Afleveret — bedømmes';badge='<div class="badge gold">Afleveret</div>'}
     } else if(isLocked){status='Lukket';badge='<div class="badge red">Lukket</div>'}
     else if(dlMs){status=`Deadline om ${fmtCd(dlMs-now)}`}
@@ -680,7 +680,7 @@ async function renderTeacher(){
       <img src="${urls[fp]||''}" alt="">
       <div class="info"><div class="nm">${esc(p.full_name||'?')} ${winners[s.id]?'🏆':''} ${s.sustainability?'🌱':''}</div>
       <div class="mt">${esc(p.class_group||'')} • ${s.day} • ${esc(s.butik.split(',')[0])}${s.released?' • <span style="color:var(--green);font-weight:700">frigivet</span>':''}</div></div>
-      <div class="gp ${s.feedback?.karakter?(s.released?'released':''):'pending'}">${s.feedback?.karakter||'...'}</div></div>`
+      <div class="gp ${s.grade?(s.released?'released':''):'pending'}">${s.grade||'...'}</div></div>`
   }).join('');
 }
 
@@ -739,7 +739,7 @@ async function togVisible(d,v){await sb.from('day_settings').update({visible:v})
 async function relAll(d){
   if(!confirm(`Frigiv alle karakterer for ${d}?`))return;
   const all=await getAllSubs();
-  const ds=all.filter(x=>x.day===d&&x.feedback?.karakter);
+  const ds=all.filter(x=>x.day===d&&x.grade);
   for(const s of ds){await sb.from('submissions').update({released:true}).eq('id',s.id)}
   alert(`${ds.length} karakterer frigivet.`);renderSettings();
 }
