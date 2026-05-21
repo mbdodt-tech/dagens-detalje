@@ -234,6 +234,7 @@
       <div class="sr" id="statsRow"></div>
       <div class="br" style="margin-bottom:16px"><button class="btn btn-s" onclick="exportCSV('all')">📊 Eksportér alle</button><button class="btn btn-s" onclick="exportCSV(S.filter)">📅 Kun valgt dag</button></div>
       <div class="chips" id="filterChips"><div class="chip active" data-day="all" onclick="setFilter('all')">Alle</div><div class="chip" data-day="tirsdag" onclick="setFilter('tirsdag')">Tirsdag</div><div class="chip" data-day="onsdag" onclick="setFilter('onsdag')">Onsdag</div><div class="chip" data-day="torsdag" onclick="setFilter('torsdag')">Torsdag</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="font-size:12px;color:var(--ink-faint);font-weight:600">Sortér:</span><div class="chips" id="sortChips" style="margin-bottom:0"><div class="chip active" data-sort="time" onclick="setSort('time')">🕐 Tidspunkt</div><div class="chip" data-sort="name" onclick="setSort('name')">👤 Navn</div><div class="chip" data-sort="grade" onclick="setSort('grade')">🎓 Karakter</div></div></div>
       <div class="sl" id="subList"></div>
     </div>
 
@@ -263,7 +264,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const DAYS = [{id:'tirsdag',label:'Tirsdag',e:'Ti'},{id:'onsdag',label:'Onsdag',e:'On'},{id:'torsdag',label:'Torsdag',e:'To'}];
 
-const S = { user:null, profile:null, role:'student', tab:'su', currentDay:null, editingId:null, filter:'all' };
+const S = { user:null, profile:null, role:'student', tab:'su', currentDay:null, editingId:null, filter:'all', sort:'time' };
 let photos=[], existingPaths=[];
 
 // === NAV ===
@@ -660,6 +661,12 @@ async function renderTeacher(){
   const list=document.getElementById('subList');
   if(!filtered.length){list.innerHTML='<div class="empty"><div class="emoji">📭</div><p>Ingen besvarelser for '+filterLabel+'</p></div>';return}
 
+  // Sortering
+  const gradeVal=g=>{const m={'-3':-3,'00':0,'02':2,'4':4,'7':7,'10':10,'12':12};return g in m?m[g]:-99};
+  if(S.sort==='name') filtered.sort((a,b)=>(a.profiles?.full_name||'').localeCompare(b.profiles?.full_name||'','da'));
+  else if(S.sort==='grade') filtered.sort((a,b)=>gradeVal(b.grade||'')-gradeVal(a.grade||''));
+  else filtered.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+
   const winners={};
   for(const d of DAYS){const ds=await getDaySetting(d.id);if(ds.winner_id)winners[ds.winner_id]=true}
 
@@ -683,7 +690,12 @@ async function openSub(id){
 }
 function setFilter(d){
   S.filter=d;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.day===d));
+  document.querySelectorAll('#filterChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.day===d));
+  renderTeacher();
+}
+function setSort(s){
+  S.sort=s;
+  document.querySelectorAll('#sortChips .chip').forEach(c=>c.classList.toggle('active',c.dataset.sort===s));
   renderTeacher();
 }
 
